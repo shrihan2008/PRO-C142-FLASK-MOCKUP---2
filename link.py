@@ -37,3 +37,23 @@ def not_liked_article():
     not_liked_articles.append(article) 
     all_articles.pop(0) 
     return jsonify({ "status": "success" })
+
+
+def populararticles():
+    article_data=[]
+    for article in output:
+        d={
+          "url": all_articles[0][11], 
+         "title": all_articles[0][12], 
+         "text": all_articles[0][13], 
+         "lang": all_articles[0][14], 
+         "total_events": all_articles[0][15] 
+        }
+        article_data.append(d)
+    return jsonify({
+        'data':article_data,
+        'status':'win'
+
+             })   
+if __name__ == "__main__":
+  app.run()
