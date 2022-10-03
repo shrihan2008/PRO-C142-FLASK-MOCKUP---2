@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 import csv
+import itertools 
 from storage import liked_articles,not_liked_articles,all_articles,output
 from contentfiltering import getreccomandation
 all_articles = []
@@ -9,8 +10,6 @@ with open('articles.csv') as f:
     data = list(reader)
     all_articles = data[1:]
 
-liked_articles = []
-not_liked_articles = []
 
 
 app = Flask(__name__)
@@ -55,5 +54,28 @@ def populararticles():
         'status':'win'
 
              })   
+
+
+@app.route("/recommended-articles") 
+def recommended_articles(): 
+    all_recommended = [] 
+    for liked_article in liked_articles: 
+        output = getreccomandation(liked_article[4]) 
+    for data in output: 
+        all_recommended.append(data) 
+        
+        all_recommended.sort()
+        all_recommended = list(all_recommended for all_recommended,_ in itertools.groupby(all_recommended)) 
+        article_data = [] 
+    for recommended in all_recommended: _d = { 
+        "url": recommended[0], 
+        "title": recommended[1],
+         "text": recommended[2], 
+         "lang": recommended[3], 
+         "total_events": recommended[4] } 
+    article_data.append(_d) 
+    return jsonify({ 
+        "data": article_data,
+         "status": "success" })
 if __name__ == "__main__":
   app.run()
